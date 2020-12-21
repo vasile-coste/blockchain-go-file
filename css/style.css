@@ -1,0 +1,82 @@
+
+.alert{
+	display:none;
+}
+
+.header{
+	font-size:18px;
+	font-weight:700;
+	margin-top:10px;
+	margin-bottom:10px;
+}
+
+.blockchainName{
+	border:1px solid #E4E4E4;
+	border-radius:5px;
+	padding:5px;
+	margin-top:10px;
+	margin-bottom:10px;
+}
+
+.getData{
+	border:1px solid #E4E4E4;
+	border-radius:5px;
+	padding:5px;
+	margin-top:10px;
+	margin-bottom:10px;
+}
+
+.rowLabel{
+	padding:5px;
+	font-weight:600;
+}
+
+.rowInput{
+}
+
+.textInput{
+	padding:5px;
+	border:1px solid #C0C0C0;
+	border-radius:5px;
+	margin-top:2px;
+	margin-bottom:2px;
+}
+
+.textInput:focus{
+	border:1px solid #5353FF;
+}
+
+.addNewProperty{
+	border:1px solid #ccc;
+	border-radius:5px;
+	padding:5px 10px;
+	background-color:#FF5809;
+}
+
+.addStructure{
+	border:1px solid #ccc;
+	border-radius:5px;
+	padding:5px 10px;
+	background-color:#007CF9;
+	color:#fff;
+}
+
+.createBlockchain{
+	border:1px solid #ccc;
+	border-radius:5px;
+	padding:5px 10px;
+	background-color:#00AE00;
+	color:#fff;
+	margin-left:10px;
+}
+
+.infoProp{
+	font-style:italic;
+}
+
+.checkBox{
+	margin-top: 7px;
+}
+label{
+	margin-left:3px;
+}

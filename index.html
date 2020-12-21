@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Generate blockchain</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	
+	<link rel="stylesheet" href="css/style.css" >
+	
+	<link rel="stylesheet" href="bootstrap/bootstrap.min.css" >
+	<script src="bootstrap/bootstrap.min.js"></script>
+</head>
+<body class="container">
+	<div class="row">
+		<div class="header">Create a Blockchain script</div>
+	</div>
+	
+	<div class="alert alert-warning fade show" role="alert">
+		Generating file, please wait...
+		<div class="spinner-border" role="status">
+		  <span class="sr-only">Loading...</span>
+		</div>
+	</div>
+	
+	<div class="alert alert-danger fade show" role="alert">
+		<span id="msg"></span>
+	</div>
+	
+	<div class="alert alert-success fade show" role="alert">
+		File generated succesfully, click <a href="#" target="_blank" id="msg-link">here</a> to download it!
+	</div>
+	
+	<div class="row blockchainName hideOnSubmit">
+		<div class="row col-sm-12 col-md-12">
+			<div class="col-sm-12 col-md-3 rowLabel">Blockchain Name</div>
+			<div class="row col-sm-12 col-md-9 rowInput">
+				<input type="text" class="col-sm-12 col-md-12 textInput" id="blockchainName" placeholder="Blockchain Name">
+			</div>
+		</div>
+	</div>
+	<div class="row mb-3 hideOnSubmit" id="addStructure">
+		<input type="button" value="Add Structure" class="addStructure">
+		<input type="button" value="Create Blockchain" class="createBlockchain">
+	</div>
+	
+	
+<script type="text/javascript">
+	$(function () {
+		var contor = 0;
+		var contorCheckbox = 0;
+		newStructure(contor);
+		
+		$(".addStructure").click(function(){
+			contor++;
+			newStructure(contor);
+		});
+		
+		$(".createBlockchain").click(function(){
+			if($("#blockchainName").val() == ""){
+				alert("Please add Blockchain Name.");
+				return;
+			}
+			if ($(".getData").length) {
+				var structures = [];
+				
+				$(".getData").each(function(){
+					var currentIndex = $(this).prop("id");
+					if($("#structureName-"+currentIndex).val() != ""){
+						var properties = [];
+						$(".structureProperties-"+currentIndex).each(function(){
+							if($(this).val() != ""){
+								var cnt = $(this).prop("id");
+								properties.push({
+									"prop":$(this).val(),
+									"update": $("#structurePropertiesUpdate-" + currentIndex + "-" + cnt).is(":checked") ? 1 : 0
+								});
+							}
+						});
+						if(properties.length > 0){
+							var structure = {
+								"structureName": $("#structureName-"+currentIndex).val(),
+								"properties": properties
+							};
+							
+							structures.push(structure);
+						}
+					}
+				});
+				
+				if(structures.length > 0){
+					console.log("data", structures);
+					$(".alert").hide();
+					$(".hideOnSubmit").slideUp();
+					$(".alert-warning").slideDown();
+					$.ajax({
+						type: "POST",
+						url: "engine.php",
+						data: 
+							{
+								"blockchainName": $("#blockchainName").val(),
+								"structures": structures
+							}
+						,
+						success: function(data){
+							console.log(data);
+							var js = JSON.parse(data);
+							
+							if(js.status == "success"){
+								$("#msg-link").attr("href", js.msg);
+								$(".alert-warning").slideUp();
+								$(".alert-success").slideDown();
+								$(".hideOnSubmit").slideDown();
+								resetForm();
+							} else {
+								$("#msg").html(js.msg);
+								$(".alert-warning").slideUp();
+								$(".alert-danger").slideDown();
+								$(".hideOnSubmit").slideDown();
+							}
+						}
+					});
+				} else {
+					alert("Please add at least one structure.");
+				}
+			} else {
+				$(".addStructure").click();
+				alert("Please add at least one structure.");
+			}
+		});
+		
+		$(document).on("click", ".addNewProperty", function(){
+			var currentId = $(this).prop("id");
+			var currentIndexArr = currentId.split("-");
+			
+			$(newProperty(currentIndexArr[1])).appendTo("#rowProperty-"+currentIndexArr[1]);
+		});
+		
+		$(document).on("click", ".removeBlock", function(){
+			$(this).parent().parent().remove();
+			return false;
+		});
+		
+		function resetForm(){
+			$(".getData").remove();
+			$("#blockchainName").val("");
+			$(".addStructure").click();
+		}
+		
+		function newProperty(index){
+			contorCheckbox++;
+			var input = ''
+				+ '<input type="text" class="col-sm-12 col-md-8 textInput structureProperties-' + index + '" id="' + contorCheckbox + '" placeholder="Structure Properties">'
+				+ '<div class="col-sm-12 col-md-4 checkBox">'
+					+ '<input type="checkbox" value="1" checked id="structurePropertiesUpdate-' + index + '-' + contorCheckbox + '">'
+					+ '<label for="structurePropertiesUpdate-' + index + '-' + contorCheckbox + '">Available for update</label>'
+				+ '</div>';
+			
+			return input;
+		}
+		
+		function newStructure(index){
+			var structure = ''
+				+ '<div class="row getData" id="' + index + '">'
+					+ '<div class="row col-sm-11 col-md-11">'
+						+ '<div class="col-sm-12 col-md-3 rowLabel">Structure Name</div>'
+						+ '<div class="row col-sm-12 col-md-9 rowInput"><input type="text" class="col-sm-12 col-md-12 textInput" id="structureName-' + index + '" placeholder="Structure Name"></div>'
+						+ '<div class="col-sm-12 col-md-3 rowLabel">'
+							+ ' Structure Properties'
+						+ '</div>'
+						+ '<div class="row col-sm-12 col-md-9 rowInput"  id="rowProperty-' + index + '">'
+							+ '<div class="infoProp">The ID and asset type will be added automatically.</div>'
+							+ newProperty(index)
+						+ '</div>'
+						+ '<div class="row col-sm-12 col-md-12 rowInput">'
+							+ '<div class="col-sm-12 col-md-3 rowLabel"></div>'
+							+ '<div class="col-sm-12 col-md-9 rowInput">'
+								+ '<input type="button" class="addNewProperty" id="addNewProperty-' + index + '" value="Add Property">'
+							+ '</div>'
+						+ '</div>'
+					+ '</div>'
+					+ '<div class="row col-sm-1 col-md-1">'
+						+ '<a href="#" id="removeBlock-' + index + '" title="remove block" class="removeBlock">x</a>';
+					+ '</div>'
+				+ '</div>';
+			$(structure).insertBefore("#addStructure");
+		}
+	});
+</script>
+</body>
+</html>
