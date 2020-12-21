@@ -1,1 +1,0 @@
-{"blockchainName":"Farmacy","structures":[{"structureName":"Drug","properties":[{"prop":"drugName","update":"1"},{"prop":"drugPrice","update":"1"},{"prop":"drugInfo","update":"1"}]},{"structureName":"Receipe","properties":[{"prop":"Name","update":"1"},{"prop":"Person","update":"1"},{"prop":"generalInfo","update":"1"}]}]}
